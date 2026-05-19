@@ -1,7 +1,12 @@
 #pragma once
 
 #include <cstdint>
+#include <algorithm>
+
 struct Pixel {
+    static constexpr uint8_t R_DEPTH = 32;
+    static constexpr uint8_t G_DEPTH = 64;
+    static constexpr uint8_t B_DEPTH = 32;
     
     Pixel(uint8_t t_r, uint8_t t_g, uint8_t t_b) {
         m_r = t_r;
@@ -21,6 +26,17 @@ struct Pixel {
 
     static Pixel zero() {
         return Pixel(0,0,0);
+    }
+
+    static Pixel from_normalised(float t_r, float t_g, float t_b) {
+    t_r = std::clamp(t_r, 0.0f, 1.0f);
+    t_g = std::clamp(t_g, 0.0f, 1.0f);
+    t_b = std::clamp(t_b, 0.0f, 1.0f);
+    return Pixel(
+        static_cast<uint8_t>(t_r * (R_DEPTH - 1)),
+        static_cast<uint8_t>(t_g * (G_DEPTH - 1)),
+        static_cast<uint8_t>(t_b * (B_DEPTH - 1))
+    );
     }
 
     uint8_t r() const { return m_r; }

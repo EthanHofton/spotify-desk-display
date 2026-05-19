@@ -29,12 +29,17 @@ LcdDisplay::LcdDisplay(uint16_t t_width, uint16_t t_height, uint16_t t_draw_buf_
         ESP_LOGE(TAG, "Failed to allocate draw buffer (%u bytes)", (unsigned)buf_size);
         abort();
     }
+
+    ESP_LOGI(TAG, "LCD Display configured");
 }
 
 LcdDisplay::~LcdDisplay() {
+    ESP_LOGI(TAG, "Deleting buffer, freeing handels");
     heap_caps_free(m_draw_buf);
+    esp_lcd_panel_del(m_panel_handle);
+    esp_lcd_panel_io_del(m_io_handle);
+    spi_bus_free(LCD_SPI_HOST);
 }
-
 
 void LcdDisplay::set_backlight(uint8_t t_brightness) {
     m_backlight = t_brightness;
