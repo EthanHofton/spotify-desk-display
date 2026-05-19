@@ -12,7 +12,8 @@ dependencies = [
     "httpx (>=0.28.1,<0.29.0)",
     "fastapi (>=0.136.1,<0.137.0)",
     "uvicorn (>=0.47.0,<0.48.0)",
-    "esptool (>=5.2.0,<6.0.0)"
+    "esptool (>=5.2.0,<6.0.0)",
+    "esp-idf-nvs-partition-gen (>=0.2.0,<0.3.0)"
 ]
 
 [project.scripts]

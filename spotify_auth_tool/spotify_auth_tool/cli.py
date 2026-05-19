@@ -12,6 +12,9 @@ import asyncio
 from tempfile import NamedTemporaryFile
 import sys
 import os
+import argparse
+from esp_idf_nvs_partition_gen import nvs_partition_gen
+from pathlib import Path
 
     # setup parttool api
 idf_path = os.environ["IDF_PATH"]
@@ -110,8 +113,20 @@ def flash(
         # get NVS partion size
         target = ParttoolTarget(port, baud)
         storage = target.get_partition_info(PartitionName("nvs"))
-        print(storage)
-        print(storage.size)
+        nvs_size_hex = hex(storage.size) # type: ignore
+
+        with tempfile.TemporaryDirectory() as td:
+            args = argparse.Namespace()
+            args.size = nvs_size_hex
+            args.version = 2
+            args.input = f.name
+            args.outdir = td
+            args.output = 'nvs.bin'
+            nvs_partition_gen.generate(args)
+
+            target.write_partition(PartitionName("nvs"), args.output)
+
+            print(args.output)
 
 def main():
     app()

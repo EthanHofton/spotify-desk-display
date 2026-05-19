@@ -377,6 +377,24 @@ cffi = {version = ">=2.0.0", markers = "platform_python_implementation != \"PyPy
 ssh = ["bcrypt (>=3.1.5)"]
 
 [[package]]
+name = "esp-idf-nvs-partition-gen"
+version = "0.2.0"
+description = "ESP-IDF NVS partition generation tool"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "esp_idf_nvs_partition_gen-0.2.0-py3-none-any.whl", hash = "sha256:7e128c81441fa406fe55b95f29a7d901098bcffc8cc464f993fdbecd074eb9a3"},
+    {file = "esp_idf_nvs_partition_gen-0.2.0.tar.gz", hash = "sha256:d1f23ce9876c0469e507b3499001266d0d17538158151a2612cc70b80706dce0"},
+]
+
+[package.dependencies]
+cryptography = "*"
+
+[package.extras]
+dev = ["pre-commit"]
+
+[[package]]
 name = "esptool"
 version = "5.2.0"
 description = "A serial utility for flashing, provisioning, and interacting with Espressif SoCs."
@@ -1062,4 +1080,4 @@ standard = ["colorama (>=0.4) ; sys_platform == \"win32\"", "httptools (>=0.6.3)
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12"
-content-hash = "c6caab2345cc1e01c1dd47b396fa3396f74fea2a5b17512d42eeb6f090793121"
+content-hash = "693ea13b0c86ccc647e333e4c1dac836cfa4c476e85d11fcf67228e3b7712d26"

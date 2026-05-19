@@ -1,4 +1,3 @@
-from io import StringIO
 import csv
 
 from spotify_auth_tool.constants import (

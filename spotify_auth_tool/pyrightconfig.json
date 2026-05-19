@@ -1,0 +1,5 @@
+{
+    "extraPaths": [
+        "/Users/ethanhofton/esp/esp-idf/components/partition_table"
+    ]
+}
