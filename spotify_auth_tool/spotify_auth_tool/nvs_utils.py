@@ -7,6 +7,9 @@ from spotify_auth_tool.constants import (
     NVS_SPOTIFY_CLIENT_SECRET,
     NVS_SPOTIFY_TOKEN_KEY,
     NVS_SPOTIFY_TOKEN_EXPIRE,
+    NVS_WIFI_NAMESPACE,
+    NVS_WIFI_SSID,
+    NVS_WIFI_PASSWORD,
     TOKEN_FILE_EXPIRES_KEY,
     TOKEN_FILE_TOKEN_KEY
 )
@@ -48,6 +51,21 @@ def build_nvs_csv(token_file: str, tmp_file) -> None:
         NVS_SPOTIFY_CLIENT_SECRET: config.spotify_client_secret,
         NVS_SPOTIFY_TOKEN_KEY: token,
         NVS_SPOTIFY_TOKEN_EXPIRE: expires
+    }
+
+    csv_rows = [[key, 'data', 'string', value] for key, value in csv_data.items()]
+    csv_writer.writerows(csv_rows)
+
+    csv_writer.writerow([
+        NVS_WIFI_NAMESPACE,
+        'namespace',
+        '',
+        '',
+    ])
+
+    csv_data = {
+        NVS_WIFI_SSID: config.wifi_ssid,
+        NVS_WIFI_PASSWORD: config.wifi_password,
     }
 
     csv_rows = [[key, 'data', 'string', value] for key, value in csv_data.items()]

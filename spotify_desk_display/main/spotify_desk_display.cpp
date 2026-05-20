@@ -3,36 +3,32 @@
 #include "esp_log.h"
 #include "managers/lvgl_manager.h"
 #include "managers/nvs_manager.h"
-#include "display/lcd_display.h"
-#include "lvgl.h"
+#include "tasks/app_state.h"
+#include "tasks/lvgl_task.h"
+#include "ui/wifi_dashboard.h"
 
 static const char* TAG = "app_main";
 
 void framebuffer_test(LcdDisplay& display);
 void nvs_manager_test();
-void create_ui();
+
 
 extern "C" void app_main(void) {
     ESP_LOGI(TAG, "Free internal: %u", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
     ESP_LOGI(TAG, "Free PSRAM:    %u", heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
 
-    static LcdDisplay display(320, 240, 5);  // static: outlives app_main's stack frame
-    LvglManager manager = LvglManager(display);
+    static AppState state;
 
-    create_ui();
+    xTaskCreate(
+        lvgl_task<WifiDashboard>,
+        "lvgl_task",
+        8192,
+        &state,
+        5,
+        NULL
+    );
 
-    while (1) {
-        lv_timer_handler();         // process LVGL tasks (rendering, animations)
-        vTaskDelay(pdMS_TO_TICKS(10));
-    }
-}
-
-void create_ui() {
-    lv_obj_t *scr = lv_scr_act();
-
-    lv_obj_t *label = lv_label_create(scr);
-    lv_label_set_text(label, "Hello World!");
-    lv_obj_center(label);
+    nvs_manager_test();
 }
 
 void framebuffer_test(LcdDisplay& display) {
@@ -66,4 +62,10 @@ void nvs_manager_test() {
 
     std::string token_expire = nvs_manager.get_str("spotify_creds", "token_expire");
     ESP_LOGI(TAG, "Loaded spotify token expire from nvs with NvsManager: %s", token_expire.c_str());
+
+    std::string wifi_ssid = nvs_manager.get_str("wifi_creds", "ssid");
+    ESP_LOGI(TAG, "Loaded wifi ssid from nvs with NvsManager: %s", wifi_ssid.c_str());
+
+    std::string wifi_password = nvs_manager.get_str("wifi_creds", "password");
+    ESP_LOGI(TAG, "Loaded wifi password from nvs with NvsManager: %s", wifi_password.c_str());
 }

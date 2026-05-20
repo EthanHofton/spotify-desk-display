@@ -5,10 +5,12 @@ from functools import lru_cache
 class Config(BaseSettings):
     spotify_client_id: str
     spotify_client_secret: str
+    wifi_ssid: str
+    wifi_password: str
     port: int = 8080
     model_config = SettingsConfigDict(env_file=".env")
 
-    @field_validator("spotify_client_id", "spotify_client_secret")
+    @field_validator("spotify_client_id", "spotify_client_secret", "wifi_ssid", "wifi_password")
     @classmethod
     def must_not_be_empty(cls, v: str, info) -> str:
         if not v or not v.strip():

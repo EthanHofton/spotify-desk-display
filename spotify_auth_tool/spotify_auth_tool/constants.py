@@ -13,3 +13,6 @@ NVS_CSV_HEADERS = [
     'value'
 ]
 
+NVS_WIFI_NAMESPACE = "wifi_creds"
+NVS_WIFI_SSID = "ssid"
+NVS_WIFI_PASSWORD = "password"

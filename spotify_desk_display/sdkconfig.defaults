@@ -1,0 +1,26 @@
+# This file was generated using idf.py save-defconfig or menuconfig [D] key. It can be edited manually.
+# Espressif IoT Development Framework (ESP-IDF) 6.1.0 Project Minimal Configuration
+#
+
+#
+# Component config
+#
+
+#
+# LVGL configuration
+#
+
+#
+# Font Usage
+#
+
+#
+# Enable built-in fonts
+#
+CONFIG_LV_FONT_MONTSERRAT_8=y
+CONFIG_LV_FONT_MONTSERRAT_10=y
+CONFIG_LV_FONT_MONTSERRAT_12=y
+# end of Enable built-in fonts
+# end of Font Usage
+# end of LVGL configuration
+# end of Component config
