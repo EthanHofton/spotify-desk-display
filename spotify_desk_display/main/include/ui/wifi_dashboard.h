@@ -12,10 +12,11 @@ public:
         Connected
     };
 
-    WifiDashboard(AppState* t_app_state);
+    WifiDashboard(AppState* t_app_state, PageManager* t_page_manager);
     virtual ~WifiDashboard() override;
     virtual void init() override;
     virtual void update() override;
+    virtual void on_button_press(const PageManagerQueueItem& t_qitem) override;
 
     void set_connection_status(ConnectionStatus t_status);
     void add_log_message(const char* t_msg);

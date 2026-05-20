@@ -14,8 +14,14 @@ idf_component_register(
         # ui
         "src/ui/base_page.cpp"
         "src/ui/wifi_dashboard.cpp"
+        "src/ui/page_manager.cpp"
+        "src/ui/hello_world.cpp"
+
+        # queue
+        "src/queue/queue_manager.cpp"
 
         # tasks
+        "src/tasks/lvgl_task.cpp"
 
     INCLUDE_DIRS
         "include"

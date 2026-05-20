@@ -1,26 +1,28 @@
+#include "display/lcd_display.h"
+#include "driver/gpio.h"
+#include "esp_attr.h"
 #include "freertos/FreeRTOS.h"
+#include "freertos/idf_additions.h"
 #include "freertos/task.h"
 #include "esp_log.h"
-#include "managers/lvgl_manager.h"
 #include "managers/nvs_manager.h"
 #include "tasks/app_state.h"
 #include "tasks/lvgl_task.h"
-#include "ui/wifi_dashboard.h"
 
 static const char* TAG = "app_main";
 
 void framebuffer_test(LcdDisplay& display);
 void nvs_manager_test();
 
-
 extern "C" void app_main(void) {
     ESP_LOGI(TAG, "Free internal: %u", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
     ESP_LOGI(TAG, "Free PSRAM:    %u", heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
+    gpio_install_isr_service(0);
 
     static AppState state;
 
     xTaskCreate(
-        lvgl_task<WifiDashboard>,
+        lvgl_task,
         "lvgl_task",
         8192,
         &state,

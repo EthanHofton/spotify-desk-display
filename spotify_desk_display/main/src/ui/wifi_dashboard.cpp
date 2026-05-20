@@ -2,8 +2,10 @@
 #include "display/lv_display.h"
 #include "freertos/idf_additions.h"
 #include "freertos/projdefs.h"
+#include "ui/page_manager.h"
 #include <cstring>
 #include <cstdio>
+#include <format>
 
 // ─────────────────────────────────────────────
 //  Colour palette
@@ -22,8 +24,8 @@ static const lv_color_t CLR_BTN_PRESS  = lv_color_hex(0x2EA043);
 // ─────────────────────────────────────────────
 //  Constructor / Destructor
 // ─────────────────────────────────────────────
-WifiDashboard::WifiDashboard(AppState* t_app_state)
-    : BasePage(t_app_state) {}
+WifiDashboard::WifiDashboard(AppState* t_app_state, PageManager* t_page_manager)
+    : BasePage(t_app_state, t_page_manager) {}
 
 WifiDashboard::~WifiDashboard() {
     // LVGL cleans up child objects when the screen is deleted
@@ -33,7 +35,13 @@ WifiDashboard::~WifiDashboard() {
     }
 }
 
-void WifiDashboard::update() {}
+void WifiDashboard::update() {
+}
+
+void WifiDashboard::on_button_press(const PageManagerQueueItem& t_qitem) {
+    this->add_log_message(std::format("Button Pressed at {} with key {}", t_qitem.m_press_timestamp, t_qitem.m_key).c_str());
+    this->m_page_manager->show_page("hello_world");
+}
 
 void WifiDashboard::init() {
     init_styles();
