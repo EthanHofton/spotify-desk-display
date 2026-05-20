@@ -4,6 +4,7 @@ idf_component_register(
         "src/managers/nvs_manager.cpp"
         "src/display/lcd_display.cpp"
         "src/display/framebuffer.cpp"
+        "src/managers/lvgl_manager.cpp"
     INCLUDE_DIRS
         "include"
 )

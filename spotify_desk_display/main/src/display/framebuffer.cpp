@@ -1,11 +1,15 @@
 #include "display/framebuffer.h"
+#include "esp_log.h"
 
 #include <cstring>
 #include <algorithm> 
 
+static const char* TAG = "FrameBuffer";
+
 FrameBuffer::FrameBuffer(uint16_t t_width, uint16_t t_height) 
     : m_width(t_width), m_height(t_height) {
     m_buffer = std::vector<Pixel>(m_width * m_height, Pixel::zero());
+    ESP_LOGI(TAG, "Created framebuffer of %u bytes", m_width * m_height * sizeof(Pixel));
 }
 
 void FrameBuffer::set_pixel(const Point& t_pos, const Pixel&t_pixel) {

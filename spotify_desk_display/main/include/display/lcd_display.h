@@ -20,7 +20,7 @@
 class LcdDisplay {
 public:
 
-    LcdDisplay(uint16_t t_width = 320, uint16_t t_height = 240, uint16_t t_draw_buf_lines = 20);
+    LcdDisplay(uint16_t t_width = 320, uint16_t t_height = 240, uint16_t t_draw_buf_lines = 5);
     ~LcdDisplay();
 
     inline uint16_t get_draw_buf_lines() const { return k_draw_buf_lines; }
@@ -30,7 +30,11 @@ public:
     /**
      * Draws the current buffer onto the screen
      */
-    void draw(const FrameBuffer& t_fb);
+    void draw_framebuffer(const FrameBuffer& t_fb);
+    /**
+     * Draws buffer on screen for LVGL
+     */
+    void draw_area(int x1, int y1, int x2, int y2, const uint16_t* px_map);
 
     /**
      * Sets the backlight to a specific brightness
@@ -38,6 +42,20 @@ public:
      * For now, if != 0, set full brightness until LEDC manager is done
      */
     void set_backlight(uint8_t t_brightness);
+
+    /* On/Off */
+    void turn_on() const;
+    void turn_off() const;
+
+    /* Color */
+    void invert_color(bool t_invert) const;
+
+    /* Orientation */
+    void mirror(bool t_mirror_x, bool t_mirror_y) const;
+    void swap_xy(bool t_swap) const;
+
+    /* Drawing */
+    void set_gap(int t_x_gap, int t_y_gap) const;
 
 private:
 

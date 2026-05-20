@@ -1,15 +1,55 @@
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include "esp_log.h"
+#include "managers/lvgl_manager.h"
 #include "managers/nvs_manager.h"
 #include "display/lcd_display.h"
+#include "lvgl.h"
 
 static const char* TAG = "app_main";
 
-extern "C" void app_main(void) {
-    LcdDisplay display = LcdDisplay();
-    FrameBuffer fb = FrameBuffer(display.get_width(), display.get_height());
-    fb.fill(Pixel::from_normalised(1, 0, 0));
+void framebuffer_test(LcdDisplay& display);
+void nvs_manager_test();
+void create_ui();
 
-    display.draw(fb);
+extern "C" void app_main(void) {
+    ESP_LOGI(TAG, "Free internal: %u", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
+    ESP_LOGI(TAG, "Free PSRAM:    %u", heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
+
+    static LcdDisplay display(320, 240, 5);  // static: outlives app_main's stack frame
+    LvglManager manager = LvglManager(display);
+
+    create_ui();
+
+    while (1) {
+        lv_timer_handler();         // process LVGL tasks (rendering, animations)
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+}
+
+void create_ui() {
+    lv_obj_t *scr = lv_scr_act();
+
+    lv_obj_t *label = lv_label_create(scr);
+    lv_label_set_text(label, "Hello World!");
+    lv_obj_center(label);
+}
+
+void framebuffer_test(LcdDisplay& display) {
+    FrameBuffer fb = FrameBuffer(display.get_width(), display.get_height());
+    fb.fill(Pixel::from_normalised(1,1,1));
+
+    for (int y = 0; y < display.get_height(); y++) {
+        for (int x = 0; x < display.get_width(); x++) {
+            fb.set_pixel(Point(x, y), Pixel::from_normalised(
+                (float)x / display.get_width(),
+                0,
+                (float)y / display.get_height()
+            ));
+        }
+    }
+
+    display.draw_framebuffer(fb);
 }
 
 void nvs_manager_test() {
