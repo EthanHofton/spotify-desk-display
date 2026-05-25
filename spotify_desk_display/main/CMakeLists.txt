@@ -10,6 +10,7 @@ idf_component_register(
         # managers
         "src/managers/lvgl_manager.cpp"
         "src/managers/nvs_manager.cpp"
+        "src/managers/wifi_manager.cpp"
 
         # ui
         "src/ui/base_page.cpp"
@@ -22,6 +23,7 @@ idf_component_register(
 
         # tasks
         "src/tasks/lvgl_task.cpp"
+        "src/tasks/wifi_task.cpp"
 
     INCLUDE_DIRS
         "include"

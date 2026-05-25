@@ -87,7 +87,9 @@ std::optional<nvs_handle_t> NvsManager::open_ns_if_not_exist(const char* t_names
     return this->m_open_namespaces[std::string(t_namespace)];
 }
 
-NvsManager::~NvsManager() {
+NvsManager::~NvsManager() {}
+
+void NvsManager::deinit() {
     for (auto& handle_pair : this->m_open_namespaces) {
         ESP_LOGI(TAG, "Closing NVS namespace: %s", handle_pair.first.c_str());
         nvs_close(handle_pair.second);

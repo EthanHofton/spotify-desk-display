@@ -24,6 +24,8 @@ public:
     
     std::string get_str(const char* t_namespace, const char *t_key);
     int32_t get_int(const char* t_namespace, const char *t_key);
+    
+    void deinit();
 
 private:
 

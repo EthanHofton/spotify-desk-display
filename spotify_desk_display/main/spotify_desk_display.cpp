@@ -8,6 +8,7 @@
 #include "managers/nvs_manager.h"
 #include "tasks/app_state.h"
 #include "tasks/lvgl_task.h"
+#include "tasks/wifi_task.h"
 
 static const char* TAG = "app_main";
 
@@ -18,6 +19,8 @@ extern "C" void app_main(void) {
     ESP_LOGI(TAG, "Free internal: %u", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
     ESP_LOGI(TAG, "Free PSRAM:    %u", heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
     gpio_install_isr_service(0);
+    // init nvs
+    NvsManager::get_instance();
 
     static AppState state;
 
@@ -25,6 +28,15 @@ extern "C" void app_main(void) {
         lvgl_task,
         "lvgl_task",
         8192,
+        &state,
+        5,
+        NULL
+    );
+
+    xTaskCreate(
+        wifi_task,
+        "wifi_task",
+        2048,
         &state,
         5,
         NULL

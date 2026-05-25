@@ -1,15 +1,27 @@
 #pragma once
+#include "callback_events/wifi_events.h"
 #include "ui/base_page.h"
 #include "lvgl.h"
 #include <cstdint>
 
+
 class WifiDashboard : public BasePage {
 public:
+
+    static constexpr const char* TAG = "WifiDashboard";
 
     enum class ConnectionStatus : uint8_t {
         NoConnection = 0,
         Connecting,
         Connected
+    };
+
+    struct LogMsgQueueItem {
+        char msg[64];
+    };
+
+    struct SetState {
+        ConnectionStatus state;
     };
 
     WifiDashboard(AppState* t_app_state, PageManager* t_page_manager);
@@ -20,6 +32,11 @@ public:
 
     void set_connection_status(ConnectionStatus t_status);
     void add_log_message(const char* t_msg);
+    
+private:
+
+    void wifi_event_handler(const WifiEvent& t_event);
+    void wifi_got_ip_handler(const WifiGotIp& t_event);
 
 private:
     // -- Layout
