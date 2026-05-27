@@ -17,6 +17,7 @@ idf_component_register(
         "src/ui/wifi_dashboard.cpp"
         "src/ui/page_manager.cpp"
         "src/ui/hello_world.cpp"
+        "src/ui/spotify_player_page.cpp"
 
         # queue
         "src/queue/queue_manager.cpp"
@@ -24,6 +25,18 @@ idf_component_register(
         # tasks
         "src/tasks/lvgl_task.cpp"
         "src/tasks/wifi_task.cpp"
+        "src/tasks/spotify_task.cpp"
+
+        # http_client
+        "src/http_client/http_client.cpp"
+
+        # spotify client
+        "src/spotify_client/spotify_client.cpp"
+        "src/spotify_client/spotify_player_state.cpp"
+
+
+        # utils
+        "src/utils/encoding.cpp"
 
     INCLUDE_DIRS
         "include"

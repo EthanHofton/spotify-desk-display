@@ -16,3 +16,4 @@ dependencies:
   #   public: true
   espressif/esp_lcd_ili9341: ^2.0.0
   espressif/esp_lvgl_port: ^2.8.0
+  espressif/cjson: ^1.7.19~2
