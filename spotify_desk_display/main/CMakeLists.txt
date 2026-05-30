@@ -18,6 +18,7 @@ idf_component_register(
         "src/ui/page_manager.cpp"
         "src/ui/hello_world.cpp"
         "src/ui/spotify_player_page.cpp"
+        "src/ui/loading_page.cpp"
 
         # queue
         "src/queue/queue_manager.cpp"

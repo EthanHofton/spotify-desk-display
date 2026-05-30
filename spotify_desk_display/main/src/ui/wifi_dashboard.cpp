@@ -40,12 +40,12 @@ WifiDashboard::~WifiDashboard() {
 void WifiDashboard::update() {
     // poll queues
     LogMsgQueueItem log_qitem;
-    if (m_app_state->m_queue_manager.poll<LogMsgQueueItem>("wifi_dashboard_log", log_qitem)) {
+    if (m_app_state->queue_manager->poll<LogMsgQueueItem>("wifi_dashboard_log", log_qitem)) {
         this->add_log_message(log_qitem.msg);
     }
 
     SetState state_qitem;
-    if (m_app_state->m_queue_manager.poll<SetState>("wifi_dashboard_state", state_qitem)) {
+    if (m_app_state->queue_manager->poll<SetState>("wifi_dashboard_state", state_qitem)) {
         this->set_connection_status(state_qitem.state);
     }
 }
@@ -53,36 +53,36 @@ void WifiDashboard::update() {
 void WifiDashboard::on_button_press(const PageManagerQueueItem& t_qitem) {
     this->add_log_message(std::format("Button Pressed at {} with key {}", t_qitem.m_press_timestamp, t_qitem.m_key).c_str());
     // this->m_page_manager->show_page("hello_world");
-    this->m_app_state->m_queue_manager.post(WifiManager::TAG, WifiCommand::CONNECT);
+    this->m_app_state->queue_manager->post(WifiManager::TAG, WifiCommand::CONNECT);
 }
 
 void WifiDashboard::wifi_event_handler(const WifiEvent& t_event) {
     ESP_LOGI(WifiDashboard::TAG, "Wifi Event from WifiDashboard");
 
     if (t_event == WifiEvent::CONNECTED) {
-        m_app_state->m_queue_manager.post<SetState>("wifi_dashboard_state", { .state = WifiDashboard::ConnectionStatus::Connected });
-        m_app_state->m_queue_manager.post<LogMsgQueueItem>("wifi_dashboard_log", { .msg = "Connected to wifi" } );
+        m_app_state->queue_manager->post<SetState>("wifi_dashboard_state", { .state = WifiDashboard::ConnectionStatus::Connected });
+        m_app_state->queue_manager->post<LogMsgQueueItem>("wifi_dashboard_log", { .msg = "Connected to wifi" } );
     } else if (t_event == WifiEvent::DISCONNECTED || t_event == WifiEvent::FAILED) {
-        m_app_state->m_queue_manager.post<SetState>("wifi_dashboard_state", { .state = WifiDashboard::ConnectionStatus::NoConnection });
-        m_app_state->m_queue_manager.post<LogMsgQueueItem>("wifi_dashboard_log", { .msg = "Failed to connect..." } );
+        m_app_state->queue_manager->post<SetState>("wifi_dashboard_state", { .state = WifiDashboard::ConnectionStatus::NoConnection });
+        m_app_state->queue_manager->post<LogMsgQueueItem>("wifi_dashboard_log", { .msg = "Failed to connect..." } );
     } else if (t_event == WifiEvent::CONNETING) {
-        m_app_state->m_queue_manager.post<SetState>("wifi_dashboard_state", { .state = WifiDashboard::ConnectionStatus::Connecting });
-        m_app_state->m_queue_manager.post<LogMsgQueueItem>("wifi_dashboard_log", { .msg = "Connecting..." } );
+        m_app_state->queue_manager->post<SetState>("wifi_dashboard_state", { .state = WifiDashboard::ConnectionStatus::Connecting });
+        m_app_state->queue_manager->post<LogMsgQueueItem>("wifi_dashboard_log", { .msg = "Connecting..." } );
     }
 }
 void WifiDashboard::wifi_got_ip_handler(const WifiGotIp& t_event) {
     ESP_LOGI(WifiDashboard::TAG, "Wifi got ip event from WifiDashboard: " IPSTR, IP2STR(&t_event.ip));
-    m_app_state->m_queue_manager.post<LogMsgQueueItem>("wifi_dashboard_log", { .msg = "Got IP from WifiDashboard" } );
+    m_app_state->queue_manager->post<LogMsgQueueItem>("wifi_dashboard_log", { .msg = "Got IP from WifiDashboard" } );
 }
 
 void WifiDashboard::init() {
     // register queues
-    m_app_state->m_queue_manager.register_queue<SetState>("wifi_dashboard_state", 5);
-    m_app_state->m_queue_manager.register_queue<LogMsgQueueItem>("wifi_dashboard_log", 5);
+    m_app_state->queue_manager->register_queue<SetState>("wifi_dashboard_state", 5);
+    m_app_state->queue_manager->register_queue<LogMsgQueueItem>("wifi_dashboard_log", 5);
 
     // register callbacks 
-    CALLBACK_CLASS_BIND(m_app_state->m_cb_manager, WifiEvent, WifiDashboard::wifi_event_handler);
-    CALLBACK_CLASS_BIND(m_app_state->m_cb_manager, WifiGotIp, WifiDashboard::wifi_got_ip_handler);
+    CALLBACK_CLASS_BIND(m_app_state->cb_manager, WifiEvent, WifiDashboard::wifi_event_handler);
+    CALLBACK_CLASS_BIND(m_app_state->cb_manager, WifiGotIp, WifiDashboard::wifi_got_ip_handler);
 
     init_styles();
 

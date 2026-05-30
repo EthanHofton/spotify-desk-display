@@ -10,7 +10,7 @@ void wifi_task(void* t_arg) {
 
     WifiCommand cmd;
     while (1) {
-        if (app_state->m_queue_manager.poll(WifiManager::TAG, cmd)) {
+        if (app_state->queue_manager->poll(WifiManager::TAG, cmd)) {
             switch (cmd) {
                 case WifiCommand::CONNECT: manager.connect(); break;
                 case WifiCommand::DISCONNECT: manager.disconnect(); break;

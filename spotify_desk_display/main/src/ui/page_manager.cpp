@@ -8,7 +8,7 @@ PageManager::PageManager(AppState* t_state) {
     m_app_state = t_state;
     m_display = std::make_unique<LcdDisplay>(320, 240, 5);
     m_lvgl_manager = std::make_unique<LvglManager>(*m_display);
-    m_app_state->m_queue_manager.register_queue<PageManagerQueueItem>(TAG, 5);
+    m_app_state->queue_manager->register_queue<PageManagerQueueItem>(TAG, 5);
 }
 
 void PageManager::show_page(const std::string& t_key) {
@@ -25,7 +25,7 @@ void PageManager::run() {
     while (1) {
         // input poll
         PageManagerQueueItem qitem;
-        if (m_app_state->m_queue_manager.poll(TAG, qitem, 0)) {
+        if (m_app_state->queue_manager->poll(TAG, qitem, 0)) {
             if (m_current_page) {
                 m_current_page->on_button_press(qitem);
             }
@@ -51,13 +51,13 @@ void IRAM_ATTR page_manager_isr_handler(void* t_arg) {
     strncpy(qitem.m_key, args->key, sizeof(qitem.m_key) - 1);
     qitem.m_key[sizeof(qitem.m_key) - 1] = '\0';
     args->last_press = now;
-    args->app_state->m_queue_manager.post_from_isr(args->queue_handle, qitem);
+    args->app_state->queue_manager->post_from_isr(args->queue_handle, qitem);
 }
 
 void PageManager::register_button(const std::string& t_button_key, gpio_num_t t_gpio_number) {
     PageManagerButtonIsrArgs args = {
         .app_state = m_app_state,
-        .queue_handle = m_app_state->m_queue_manager.get_queue_handle(TAG)
+        .queue_handle = m_app_state->queue_manager->get_queue_handle(TAG)
     };
     strncpy(args.key, t_button_key.c_str(), sizeof(args.key) - 1);
     args.key[sizeof(args.key) - 1] = '\0';

@@ -10,6 +10,9 @@ class WifiManager {
 public:
     static constexpr const char* TAG = "WifiManager";
 
+    static void connect(AppState* t_state);
+    static void disconnect(AppState* t_state);
+
     WifiManager(AppState* t_state);
     ~WifiManager();
 

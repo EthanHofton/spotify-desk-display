@@ -20,10 +20,18 @@ WifiManager::WifiManager(AppState* t_state) : m_app_state(t_state) {
         m_netif_handle = esp_netif_create_default_wifi_sta();
         wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
         ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-        m_app_state->m_queue_manager.register_queue<WifiCommand>(TAG, 5);
+        m_app_state->queue_manager->register_queue<WifiCommand>(TAG, 5);
 
         s_wifi_init = true;
     }
+}
+
+void WifiManager::connect(AppState* t_state) {
+    t_state->queue_manager->post<WifiCommand>(WifiManager::TAG, WifiCommand::CONNECT);
+}
+
+void WifiManager::disconnect(AppState* t_state) {
+    t_state->queue_manager->post<WifiCommand>(WifiManager::TAG, WifiCommand::DISCONNECT);
 }
 
 void WifiManager::connect() {
@@ -119,27 +127,27 @@ void WifiManager::event_handler(void* t_arg, esp_event_base_t t_event_base, int3
 
     if (t_event_base == WIFI_EVENT && t_event_id == WIFI_EVENT_STA_START) {
         ESP_LOGI(self->TAG, "STA START");
-        self->m_app_state->m_cb_manager.fire<WifiEvent>(WifiEvent::CONNETING);
+        self->m_app_state->cb_manager->fire<WifiEvent>(WifiEvent::CONNETING);
         esp_wifi_connect();
     } else if (t_event_base == WIFI_EVENT && t_event_id == WIFI_EVENT_STA_DISCONNECTED) {
         if (self->m_retry_count < self->m_max_retries) {
-            self->m_app_state->m_cb_manager.fire<WifiEvent>(WifiEvent::DISCONNECTED);
+            self->m_app_state->cb_manager->fire<WifiEvent>(WifiEvent::DISCONNECTED);
             esp_wifi_connect();
             self->m_retry_count++;
             ESP_LOGI(self->TAG, "Retring to connect to the AP");
         } else {
-            self->m_app_state->m_cb_manager.fire<WifiEvent>(WifiEvent::FAILED);
+            self->m_app_state->cb_manager->fire<WifiEvent>(WifiEvent::FAILED);
             xEventGroupSetBits(self->m_event_group, WIFI_FAIL_BIT);
         }
     } else if (t_event_base == IP_EVENT && t_event_id == IP_EVENT_STA_GOT_IP) {
         ip_event_got_ip_t* event = static_cast<ip_event_got_ip_t*>(t_event_data);
-        self->m_app_state->m_cb_manager.fire<WifiGotIp>({ .ip = event->ip_info.ip });
+        self->m_app_state->cb_manager->fire<WifiGotIp>({ .ip = event->ip_info.ip });
         ESP_LOGI(self->TAG, "Got IP: " IPSTR, IP2STR(&event->ip_info.ip));
         self->m_retry_count = 0;
         xEventGroupSetBits(self->m_event_group, WIFI_CONNECTED_BIT);
     } else if (t_event_base == WIFI_EVENT && t_event_id == WIFI_EVENT_STA_CONNECTED) {
         ESP_LOGI(self->TAG, "STA Connected");
-        self->m_app_state->m_cb_manager.fire<WifiEvent>(WifiEvent::CONNECTED);
+        self->m_app_state->cb_manager->fire<WifiEvent>(WifiEvent::CONNECTED);
     }
 }
 
